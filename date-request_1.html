@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>extremely important question</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --yellow:#ffe135;
+  --yellow-dark:#e6c800;
+  --orange:#ff8c42;
+  --green:#4ecb71;
+  --blue:#4fc3f7;
+  --pink:#ff6eb4;
+  --text:#1a1a1a;
+  --muted:#555;
+  --bg:#fffef0;
+}
+body{
+  min-height:100vh;
+  background:var(--bg);
+  font-family:'Nunito',sans-serif;
+  color:var(--text);
+  overflow-x:hidden;
+  position:relative;
+}
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:radial-gradient(circle,rgba(255,225,53,0.25) 2px,transparent 2px);
+  background-size:32px 32px;
+  pointer-events:none;z-index:0;
+}
+.floaties{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.floaty{
+  position:absolute;top:-60px;
+  animation:falldumb linear infinite;
+  font-size:1.4rem;opacity:0.7;
+}
+@keyframes falldumb{
+  0%{transform:translateY(-60px) rotate(0deg)}
+  100%{transform:translateY(110vh) rotate(720deg)}
+}
+.screen{
+  display:none;min-height:100vh;
+  align-items:center;justify-content:center;
+  flex-direction:column;padding:2rem 1.5rem;
+  position:relative;z-index:1;text-align:center;
+  animation:boing 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+.screen.active{display:flex}
+@keyframes boing{
+  from{opacity:0;transform:scale(0.7) rotate(-3deg)}
+  to{opacity:1;transform:scale(1) rotate(0deg)}
+}
+.main-emoji{font-size:5rem;display:block;margin-bottom:0.5rem;animation:wiggle 0.8s ease-in-out infinite}
+@keyframes wiggle{
+  0%,100%{transform:rotate(-8deg) scale(1)}
+  50%{transform:rotate(8deg) scale(1.1)}
+}
+h1{
+  font-family:'Boogaloo',cursive;
+  font-size:clamp(2.4rem,9vw,4.2rem);
+  color:var(--text);line-height:1.1;
+  margin-bottom:0.5rem;
+  text-shadow:3px 3px 0 var(--yellow);
+}
+h1 em{font-style:normal;color:var(--orange);text-shadow:3px 3px 0 #ff8c4244}
+.subtitle{font-size:1rem;color:var(--muted);margin-bottom:2rem;font-style:italic}
+.subtitle span{display:inline-block;animation:shakehead 1.5s ease-in-out infinite}
+@keyframes shakehead{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+
+.btn-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn{
+  padding:0.8rem 2.2rem;border-radius:12px;
+  font-family:'Boogaloo',cursive;font-size:1.25rem;
+  cursor:pointer;border:3px solid var(--text);
+  transition:transform 0.1s,box-shadow 0.1s;
+  box-shadow:4px 4px 0 var(--text);letter-spacing:0.03em;
+}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--text)}
+.btn-yes{background:var(--yellow);color:var(--text)}
+.btn-yes:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--text)}
+.btn-no{background:#fff;color:var(--muted)}
+.btn-no.running{position:fixed;transition:none;cursor:not-allowed;z-index:999;box-shadow:4px 4px 0 var(--text)}
+.btn-no:not(.running):hover{background:#f0f0f0;transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--text)}
+
+.card{
+  background:#fff;border:3px solid var(--text);
+  border-radius:20px;padding:2rem;
+  max-width:480px;width:100%;
+  box-shadow:8px 8px 0 var(--text);text-align:left;
+}
+.card-title{font-family:'Boogaloo',cursive;font-size:2rem;text-align:center;margin-bottom:0.2rem;text-shadow:2px 2px 0 var(--yellow)}
+.card-sub{font-size:0.9rem;color:var(--muted);text-align:center;margin-bottom:1.5rem;font-style:italic}
+.field{margin-bottom:1.2rem}
+label{display:block;font-size:0.82rem;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem}
+input[type=date],input[type=time],input[type=text],textarea{
+  width:100%;padding:0.65rem 0.9rem;
+  border:2px solid var(--text);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:0.97rem;
+  background:#fffef0;color:var(--text);
+  outline:none;transition:box-shadow 0.15s;
+  box-shadow:3px 3px 0 #e0e0e0;
+}
+input:focus,textarea:focus{box-shadow:3px 3px 0 var(--yellow-dark)}
+textarea{resize:vertical;min-height:75px;line-height:1.5}
+.options-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:0.5rem}
+.opt{
+  padding:0.7rem 0.4rem;border-radius:12px;
+  border:2.5px solid var(--text);background:#fff;
+  cursor:pointer;text-align:center;font-size:0.85rem;
+  font-family:'Nunito',sans-serif;font-weight:700;color:var(--text);
+  transition:transform 0.12s,box-shadow 0.12s,background 0.12s;
+  box-shadow:3px 3px 0 var(--text);
+}
+.opt:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--text);background:#fffef0}
+.opt:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--text)}
+.opt.selected{background:var(--yellow);box-shadow:3px 3px 0 var(--text)}
+.opt .opt-icon{font-size:1.5rem;display:block;margin-bottom:0.2rem}
+#customField{display:none;margin-top:0.5rem}
+.btn-submit{
+  width:100%;padding:0.85rem;
+  background:var(--orange);color:#fff;
+  border:3px solid var(--text);border-radius:12px;
+  font-family:'Boogaloo',cursive;font-size:1.3rem;
+  cursor:pointer;margin-top:0.5rem;
+  box-shadow:5px 5px 0 var(--text);
+  transition:transform 0.1s,box-shadow 0.1s;letter-spacing:0.03em;
+}
+.btn-submit:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--text)}
+.btn-submit:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--text)}
+.btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:5px 5px 0 var(--text)}
+
+#s3 h1{font-size:clamp(2rem,7vw,3.5rem)}
+.confirm-box{
+  margin-top:1.5rem;background:#fff;
+  border:3px solid var(--text);border-radius:16px;
+  padding:1.2rem 1.5rem;text-align:left;
+  max-width:380px;width:100%;
+  box-shadow:6px 6px 0 var(--text);
+  font-size:0.97rem;line-height:1.9;
+}
+.confirm-box strong{color:var(--orange)}
+.stamp{
+  display:inline-block;font-family:'Boogaloo',cursive;font-size:1.6rem;
+  border:4px solid var(--green);border-radius:8px;
+  color:var(--green);padding:0.2rem 0.8rem;
+  transform:rotate(-4deg);margin-top:1.2rem;letter-spacing:0.05em;
+  animation:stampin 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+}
+@keyframes stampin{
+  from{transform:rotate(-4deg) scale(3);opacity:0}
+  to{transform:rotate(-4deg) scale(1);opacity:1}
+}
+.err{font-size:0.82rem;color:#e53935;margin-top:0.3rem;display:none;font-weight:600}
+
+/* toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--text);color:#fff;
+  font-family:'Boogaloo',cursive;font-size:1.1rem;
+  padding:0.7rem 1.5rem;border-radius:50px;
+  box-shadow:4px 4px 0 rgba(0,0,0,0.3);
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  z-index:500;pointer-events:none;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* setup banner */
+.setup-banner{
+  background:var(--yellow);border:2.5px solid var(--text);
+  border-radius:12px;padding:0.9rem 1.2rem;
+  font-size:0.82rem;line-height:1.6;color:var(--text);
+  margin-bottom:1.2rem;box-shadow:3px 3px 0 var(--text);
+  text-align:left;
+}
+.setup-banner strong{font-size:0.85rem}
+.setup-banner code{
+  background:rgba(0,0,0,0.08);border-radius:4px;
+  padding:0.1rem 0.35rem;font-size:0.8rem;font-family:monospace;
+}
+
+#adminLink{position:fixed;bottom:14px;right:16px;font-size:0.7rem;color:#ddd;border:none;background:none;font-family:'Nunito',sans-serif;cursor:pointer;z-index:100;transition:color 0.2s}
+#adminLink:hover{color:#999}
+#adminModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+#adminModal.open{display:flex}
+.admin-card{background:#fff;border:3px solid var(--text);border-radius:20px;box-shadow:8px 8px 0 var(--text);padding:2rem;max-width:520px;width:100%;max-height:80vh;overflow-y:auto}
+.admin-card h2{font-family:'Boogaloo',cursive;font-size:1.8rem;margin-bottom:1rem}
+.response-item{border:2px solid var(--text);border-radius:12px;padding:0.9rem 1.1rem;margin-bottom:0.8rem;font-size:0.9rem;line-height:1.8;background:#fffef0;box-shadow:3px 3px 0 var(--text)}
+.response-item strong{color:var(--orange)}
+.no-responses{color:var(--muted);font-size:0.95rem;text-align:center;padding:1rem;font-style:italic}
+.admin-close{margin-top:1rem;width:100%;padding:0.7rem;background:var(--yellow);color:var(--text);border:2.5px solid var(--text);border-radius:10px;font-family:'Boogaloo',cursive;font-size:1.15rem;cursor:pointer;box-shadow:3px 3px 0 var(--text);transition:transform 0.1s,box-shadow 0.1s}
+.admin-close:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--text)}
+</style>
+</head>
+<body>
+
+<div class="floaties" id="floaties"></div>
+
+<!-- SCREEN 1 -->
+<div class="screen active" id="s1">
+  <span class="main-emoji">🤯</span>
+  <h1>will you go on a date<br/>with <em>Linhan</em>??</h1>
+  <p class="subtitle"><span>✨</span> arguably the coolest guy to ever exist <span>✨</span></p>
+  <div class="btn-row">
+    <button class="btn btn-yes" onclick="goToScheduler()">yes omg!! 🎉</button>
+    <button class="btn btn-no" id="noBtn" onclick="handleNo()">no</button>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="s2">
+  <div class="card">
+    <div class="card-title">ok so when tho 📅</div>
+    <p class="card-sub">fill this out or i will combust</p>
+
+
+
+    <div class="field">
+      <label>📅 what day</label>
+      <input type="date" id="dateInput"/>
+      <span class="err" id="errDate">bro pick a date 😭</span>
+    </div>
+    <div class="field">
+      <label>🕐 what time</label>
+      <input type="time" id="timeInput"/>
+      <span class="err" id="errTime">need a time bestie 🙏</span>
+    </div>
+    <div class="field">
+      <label>🤔 what do you wanna do</label>
+      <div class="options-grid">
+        <button class="opt" data-val="Sushi dinner 🍣" onclick="selectOpt(this)">
+          <span class="opt-icon">🍣</span>sushi dinner
+        </button>
+        <button class="opt" data-val="Costco run 🛒" onclick="selectOpt(this)">
+          <span class="opt-icon">🛒</span>costco
+        </button>
+        <button class="opt" data-val="Activity" onclick="selectOpt(this)" id="actBtn">
+          <span class="opt-icon">🎯</span>activity??
+        </button>
+      </div>
+      <div id="customField">
+        <input type="text" id="customInput" placeholder="what activity? be specific lol"/>
+      </div>
+      <span class="err" id="errOpt">pick one!! 😤</span>
+    </div>
+    <div class="field">
+      <label>💬 anything else? (optional)</label>
+      <textarea id="noteInput" placeholder="extra thoughts, demands, idk go off"></textarea>
+    </div>
+    <button class="btn-submit" id="submitBtn" onclick="submitDate()">send it 🚀</button>
+  </div>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="screen" id="s3">
+  <span style="font-size:4rem;animation:wiggle 0.8s ease-in-out infinite;display:block;margin-bottom:0.8rem">🎊</span>
+  <h1>IT'S A <em>DATE!!</em></h1>
+  <p class="subtitle">literally so excited rn. here's the plan:</p>
+  <div class="confirm-box" id="confirmDetails"></div>
+  <div class="stamp">LOCKED IN ✓</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button id="adminLink" onclick="openAdmin()" title="see responses">●</button>
+<div id="adminModal">
+  <div class="admin-card">
+    <h2>📬 their answers lol</h2>
+    <div id="responseList"></div>
+    <button class="admin-close" onclick="closeAdmin()">close it</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  EMAILJS CONFIG — paste your values below
+// ============================================================
+const EMAILJS_PUBLIC_KEY  = 'ULBuWwXxGPIklxNrN';
+const EMAILJS_SERVICE_ID  = 'service_fsww7hi';
+const EMAILJS_TEMPLATE_ID = 'template_tax8o5c';
+const TO_EMAIL            = 'linhansun@gmail.com';
+// ============================================================
+
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+// Hide setup banner if keys are filled in
+if (!EMAILJS_PUBLIC_KEY.startsWith('PASTE')) {
+  const b = document.getElementById('setupBanner');
+  if (b) b.style.display = 'none';
+}
+
+// Flying emojis
+const floatEmojis=['🍕','👀','✨','😂','💀','🔥','🫠','👁️','🐸','💅','🤌','😭','🪄','🎲','🧃','🫶'];
+const floaties=document.getElementById('floaties');
+for(let i=0;i<20;i++){
+  const f=document.createElement('div');
+  f.className='floaty';
+  f.textContent=floatEmojis[Math.floor(Math.random()*floatEmojis.length)];
+  f.style.cssText=`left:${Math.random()*100}%;font-size:${0.9+Math.random()*1}rem;animation-duration:${6+Math.random()*9}s;animation-delay:${-Math.random()*10}s;opacity:${0.3+Math.random()*0.5};`;
+  floaties.appendChild(f);
+}
+
+// No button
+let noClicks=0;
+const noBtn=document.getElementById('noBtn');
+function handleNo(){
+  noClicks++;
+  if(noClicks===1){
+    noBtn.classList.add('running');
+    const rect=noBtn.getBoundingClientRect();
+    noBtn.style.left=rect.left+'px';noBtn.style.top=rect.top+'px';
+    noBtn.onmouseenter=runAway;noBtn.ontouchstart=runAway;
+    runAway();
+  }
+}
+function runAway(){
+  const m=60,bw=noBtn.offsetWidth,bh=noBtn.offsetHeight;
+  noBtn.style.left=Math.floor(Math.random()*(window.innerWidth-bw-m)+m)+'px';
+  noBtn.style.top=Math.floor(Math.random()*(window.innerHeight-bh-m)+m)+'px';
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const s=document.getElementById(id);
+  s.style.animation='none';s.offsetHeight;s.style.animation='';
+  s.classList.add('active');
+}
+function goToScheduler(){noBtn.style.display='none';showScreen('s2')}
+
+let selectedOpt=null;
+function selectOpt(el){
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');selectedOpt=el.dataset.val;
+  document.getElementById('customField').style.display=el.id==='actBtn'?'block':'none';
+  document.getElementById('errOpt').style.display='none';
+}
+
+function showToast(msg, dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+async function submitDate(){
+  let valid=true;
+  const date=document.getElementById('dateInput').value;
+  const time=document.getElementById('timeInput').value;
+  const note=document.getElementById('noteInput').value.trim();
+  let activity=selectedOpt;
+
+  if(!date){document.getElementById('errDate').style.display='block';valid=false}
+  else document.getElementById('errDate').style.display='none';
+  if(!time){document.getElementById('errTime').style.display='block';valid=false}
+  else document.getElementById('errTime').style.display='none';
+  if(!selectedOpt){document.getElementById('errOpt').style.display='block';valid=false}
+  else document.getElementById('errOpt').style.display='none';
+
+  if(selectedOpt==='Activity'){
+    const custom=document.getElementById('customInput').value.trim();
+    if(!custom){document.getElementById('customInput').style.borderColor='red';valid=false}
+    else{activity='Activity: '+custom;document.getElementById('customInput').style.borderColor=''}
+  }
+  if(!valid)return;
+
+  const dObj=new Date(date+'T'+time);
+  const dateStr=dObj.toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const timeStr=dObj.toLocaleTimeString('en-CA',{hour:'numeric',minute:'2-digit',hour12:true});
+
+  // Save locally
+  const entry={date:dateStr,time:timeStr,activity,note,saved:new Date().toISOString()};
+  const existing=JSON.parse(localStorage.getItem('dateResponses')||'[]');
+  existing.push(entry);
+  localStorage.setItem('dateResponses',JSON.stringify(existing));
+
+  // Send email via EmailJS
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='sending 📤...';
+
+  if (!EMAILJS_PUBLIC_KEY.startsWith('PASTE')) {
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: TO_EMAIL,
+        date: dateStr,
+        time: timeStr,
+        activity: activity,
+        note: note || '(nothing)',
+      });
+      showToast('📨 sent to linhan!');
+    } catch(err) {
+      console.error('EmailJS error:', err);
+      showToast('⚠️ email failed — saved locally tho');
+    }
+  } else {
+    showToast('⚙️ EmailJS not set up yet — saved locally');
+  }
+
+  btn.disabled=false;btn.textContent='send it 🚀';
+
+  document.getElementById('confirmDetails').innerHTML=`
+    <strong>📅 date:</strong> ${dateStr}<br/>
+    <strong>🕐 time:</strong> ${timeStr}<br/>
+    <strong>✨ vibe:</strong> ${activity}${note?`<br/><strong>💬 note:</strong> ${note}`:''}
+  `;
+  showScreen('s3');
+}
+
+function openAdmin(){
+  const list=document.getElementById('responseList');
+  const data=JSON.parse(localStorage.getItem('dateResponses')||'[]');
+  list.innerHTML=!data.length
+    ? '<p class="no-responses">nobody answered yet 😔 send the link!!</p>'
+    : data.map((r,i)=>`
+        <div class="response-item">
+          <strong>response ${i+1}</strong><br/>
+          📅 <strong>date:</strong> ${r.date}<br/>
+          🕐 <strong>time:</strong> ${r.time}<br/>
+          ✨ <strong>vibe:</strong> ${r.activity}
+          ${r.note?`<br/>💬 <strong>note:</strong> ${r.note}`:''}
+          <br/><span style="font-size:0.75rem;color:#aaa">sent: ${new Date(r.saved).toLocaleString()}</span>
+        </div>`).join('');
+  document.getElementById('adminModal').classList.add('open');
+}
+function closeAdmin(){document.getElementById('adminModal').classList.remove('open')}
+document.getElementById('adminModal').addEventListener('click',function(e){if(e.target===this)closeAdmin()});
+</script>
+</body>
+</html>
